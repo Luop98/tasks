@@ -26,6 +26,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -46,6 +47,50 @@ class HomePage extends StatelessWidget {
                 icon: Icons.description,
               ),
               divider10(),
+              Text("Categoria: "),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.start,
+                runAlignment: WrapAlignment.start,
+                spacing: 10.0,
+                children: [
+                  FilterChip(
+                    selected: true,
+                    backgroundColor: kBranSecondaryColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    selectedColor: categoryColor["Personal"],
+                    checkmarkColor: Colors.white,
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    label: Text("Personal"),
+                    onSelected: (bool value) {},
+                  ),
+                   FilterChip(
+                    selected: true,
+                    backgroundColor: kBranSecondaryColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    selectedColor: categoryColor["Trabajo"],
+                    checkmarkColor: Colors.white,
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    label: Text("Trabajo"),
+                    onSelected: (bool value) {},
+                  ),
+                   FilterChip(
+                    selected: true,
+                    backgroundColor: kBranSecondaryColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    selectedColor: categoryColor["Otro"],
+                    checkmarkColor: Colors.white,
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    label: Text("Otro"),
+                    onSelected: (bool value) {},
+                  ),
+                ],
+              ),
               divider10(),
               ButtonNormalWidget(),
             ],
