@@ -26,3 +26,42 @@ Widget loadinWidget() => Center(
         ),
       ),
     );
+
+
+showSnackBarSuccess(BuildContext context, String text){
+   ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              backgroundColor: const Color(0xff17c3b2),
+              content: Row(
+                children: [
+                const  Icon(Icons.check, color: Colors.white,),
+                  divider10Width(), 
+                  Text(text)
+                ],
+              ),
+            ),
+          );
+}
+
+showSnackBarError(BuildContext context, String text){
+   ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              backgroundColor: Colors.redAccent,
+              content: Row(
+                children: [
+                const  Icon(Icons.warning_amber, color: Colors.white,),
+                  divider10Width(), 
+                  Text(text)
+                ],
+              ),
+            ),
+          );
+}

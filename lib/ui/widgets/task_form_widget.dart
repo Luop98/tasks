@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tasks/models/task_model.dart';
 import 'package:tasks/services/my_service_firestore.dart';
 
 import '../general/colors.dart';
@@ -14,56 +15,67 @@ class TaskFormWidget extends StatefulWidget {
 }
 
 class _TaskFormWidgetState extends State<TaskFormWidget> {
- 
   final formKey = GlobalKey<FormState>();
-  MyServiceFirestore taskService = MyServiceFirestore(collection: "Tasks");
+  MyServiceFirestore taskService = MyServiceFirestore(collection: "tasks");
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descrptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
   String categorySelectd = "Personal";
 
-
   showSelectDate() async {
-
     DateTime? datetime = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2022),
-        lastDate: DateTime(2030),
-        cancelText: "Cancelar",
-        
-        confirmText: "Aceptar",
-        helpText: "Seleccionar Fecha",
-        builder: (BuildContext context, Widget? widget) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              dialogBackgroundColor: Colors.white,
-              dialogTheme: DialogTheme(
-                elevation: 0,
-                backgroundColor:kBranPrimaryColor ,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
+      cancelText: "Cancelar",
+      confirmText: "Aceptar",
+      helpText: "Seleccionar Fecha",
+      builder: (BuildContext context, Widget? widget) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            dialogBackgroundColor: Colors.white,
+            dialogTheme: DialogTheme(
+              elevation: 0,
+              backgroundColor: kBranPrimaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
               ),
-              colorScheme: ColorScheme.dark(
-                primary: kBranPrimaryColor,
-              ),
-              
             ),
-            child: widget!,
-          );
-        },);
+            colorScheme: ColorScheme.dark(
+              primary: kBranPrimaryColor,
+            ),
+          ),
+          child: widget!,
+        );
+      },
+    );
 
-        if(datetime!=null){
-          _dateController.text = datetime.toString().substring(0, 10);
-          setState(() {}) ;
-        }
+    if (datetime != null) {
+      _dateController.text = datetime.toString().substring(0, 10);
+      setState(() {});
+    }
   }
 
-  registerTask(){
-    if(formKey.currentState!.validate()){
-      taskService.addTask();            
+  registerTask() {
+    if (formKey.currentState!.validate()) {
+      TaskModel taskModel = TaskModel(
+        title: _titleController.text,
+        description: _descrptionController.text,
+        date: _dateController.text,
+        category: categorySelectd,
+        status: true,
+      );
+      taskService.addTask(taskModel).then((value) {
+        if (value.isNotEmpty) {
+          Navigator.pop(context);
+         showSnackBarSuccess(context, "La tarea fue registrada con exito.");
+        }
+      }).catchError((error) {
+        showSnackBarError(context, "Hubo un incoveniente, inténtelo nuevamente");
+          Navigator.pop(context);
+      });
     }
   }
 
@@ -84,7 +96,7 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-         const   Text(
+            const Text(
               "Agregar tarea",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
@@ -104,20 +116,22 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
               controller: _descrptionController,
             ),
             divider10(),
-          const  Text("Categoria: "),
+            const Text("Categoria: "),
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.start,
               runAlignment: WrapAlignment.start,
               spacing: 10.0,
               children: [
                 FilterChip(
-                  selected: categorySelectd=="Personal",
+                  selected: categorySelectd == "Personal",
                   backgroundColor: kBranSecondaryColor,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   selectedColor: categoryColor[categorySelectd],
                   checkmarkColor: Colors.white,
                   labelStyle: TextStyle(
-                    color:categorySelectd=="Personal" ? Colors.white: kBranPrimaryColor,
+                    color: categorySelectd == "Personal"
+                        ? Colors.white
+                        : kBranPrimaryColor,
                   ),
                   label: Text("Personal"),
                   onSelected: (bool value) {
@@ -126,13 +140,15 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
                   },
                 ),
                 FilterChip(
-                  selected: categorySelectd=="Trabajo",
+                  selected: categorySelectd == "Trabajo",
                   backgroundColor: kBranSecondaryColor,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   selectedColor: categoryColor[categorySelectd],
                   checkmarkColor: Colors.white,
                   labelStyle: TextStyle(
-                    color:categorySelectd=="Trabajo" ? Colors.white: kBranPrimaryColor,
+                    color: categorySelectd == "Trabajo"
+                        ? Colors.white
+                        : kBranPrimaryColor,
                   ),
                   label: Text("Trabajo"),
                   onSelected: (bool value) {
@@ -140,14 +156,16 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
                     setState(() {});
                   },
                 ),
-                 FilterChip(
-                  selected: categorySelectd=="Otro",
+                FilterChip(
+                  selected: categorySelectd == "Otro",
                   backgroundColor: kBranSecondaryColor,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   selectedColor: categoryColor[categorySelectd],
                   checkmarkColor: Colors.white,
                   labelStyle: TextStyle(
-                    color:categorySelectd=="Otro" ? Colors.white: kBranPrimaryColor,
+                    color: categorySelectd == "Otro"
+                        ? Colors.white
+                        : kBranPrimaryColor,
                   ),
                   label: Text("Otro"),
                   onSelected: (bool value) {
@@ -155,8 +173,6 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
                     setState(() {});
                   },
                 ),
-               
-             
               ],
             ),
             divider10(),
@@ -170,7 +186,7 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
             ),
             divider20(),
             ButtonNormalWidget(
-              onPressed: (){
+              onPressed: () {
                 registerTask();
               },
             ),
