@@ -13,22 +13,34 @@ class TaskFormWidget extends StatefulWidget {
 }
 
 class _TaskFormWidgetState extends State<TaskFormWidget> {
+ 
+  final formKey = GlobalKey<FormState>();
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descrptionController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+
+  String categorySelectd = "Personal";
+
+
   showSelectDate() async {
+
     DateTime? datetime = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2022),
         lastDate: DateTime(2030),
         cancelText: "Cancelar",
+        
         confirmText: "Aceptar",
         helpText: "Seleccionar Fecha",
         builder: (BuildContext context, Widget? widget) {
           return Theme(
-            data: ThemeData.dark().copyWith(
+            data: ThemeData.light().copyWith(
               dialogBackgroundColor: Colors.white,
               dialogTheme: DialogTheme(
                 elevation: 0,
-                backgroundColor: kBranPrimaryColor,
+                backgroundColor:kBranPrimaryColor ,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                 ),
@@ -41,96 +53,124 @@ class _TaskFormWidgetState extends State<TaskFormWidget> {
             child: widget!,
           );
         },);
+
+        if(datetime!=null){
+          _dateController.text = datetime.toString().substring(0, 10);
+          setState(() {}) ;
+        }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(14.0),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(22.0),
           topRight: Radius.circular(22.0),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Agregar tarea",
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15.0,
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+         const   Text(
+              "Agregar tarea",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15.0,
+              ),
             ),
-          ),
-          divider10(),
-          TextFieldNormalWidget(
-            hintText: "Titulo",
-            icon: Icons.text_fields,
-          ),
-          divider10(),
-          TextFieldNormalWidget(
-            hintText: "Description",
-            icon: Icons.description,
-          ),
-          divider10(),
-          Text("Categoria: "),
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.start,
-            runAlignment: WrapAlignment.start,
-            spacing: 10.0,
-            children: [
-              FilterChip(
-                selected: true,
-                backgroundColor: kBranSecondaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                selectedColor: categoryColor["Personal"],
-                checkmarkColor: Colors.white,
-                labelStyle: TextStyle(
-                  color: Colors.white,
+            divider10(),
+            TextFieldNormalWidget(
+              hintText: "Titulo",
+              icon: Icons.text_fields,
+              controller: _titleController,
+            ),
+            divider10(),
+            TextFieldNormalWidget(
+              hintText: "Description",
+              icon: Icons.description,
+              controller: _descrptionController,
+            ),
+            divider10(),
+          const  Text("Categoria: "),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
+              runAlignment: WrapAlignment.start,
+              spacing: 10.0,
+              children: [
+                FilterChip(
+                  selected: categorySelectd=="Personal",
+                  backgroundColor: kBranSecondaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  selectedColor: categoryColor[categorySelectd],
+                  checkmarkColor: Colors.white,
+                  labelStyle: TextStyle(
+                    color:categorySelectd=="Personal" ? Colors.white: kBranPrimaryColor,
+                  ),
+                  label: Text("Personal"),
+                  onSelected: (bool value) {
+                    categorySelectd = "Personal";
+                    setState(() {});
+                  },
                 ),
-                label: Text("Personal"),
-                onSelected: (bool value) {},
-              ),
-              FilterChip(
-                selected: true,
-                backgroundColor: kBranSecondaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                selectedColor: categoryColor["Trabajo"],
-                checkmarkColor: Colors.white,
-                labelStyle: TextStyle(
-                  color: Colors.white,
+                FilterChip(
+                  selected: categorySelectd=="Trabajo",
+                  backgroundColor: kBranSecondaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  selectedColor: categoryColor[categorySelectd],
+                  checkmarkColor: Colors.white,
+                  labelStyle: TextStyle(
+                    color:categorySelectd=="Trabajo" ? Colors.white: kBranPrimaryColor,
+                  ),
+                  label: Text("Trabajo"),
+                  onSelected: (bool value) {
+                    categorySelectd = "Trabajo";
+                    setState(() {});
+                  },
                 ),
-                label: Text("Trabajo"),
-                onSelected: (bool value) {},
-              ),
-              FilterChip(
-                selected: true,
-                backgroundColor: kBranSecondaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                selectedColor: categoryColor["Otro"],
-                checkmarkColor: Colors.white,
-                labelStyle: TextStyle(
-                  color: Colors.white,
+                 FilterChip(
+                  selected: categorySelectd=="Otro",
+                  backgroundColor: kBranSecondaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  selectedColor: categoryColor[categorySelectd],
+                  checkmarkColor: Colors.white,
+                  labelStyle: TextStyle(
+                    color:categorySelectd=="Otro" ? Colors.white: kBranPrimaryColor,
+                  ),
+                  label: Text("Otro"),
+                  onSelected: (bool value) {
+                    categorySelectd = "Otro";
+                    setState(() {});
+                  },
                 ),
-                label: Text("Otro"),
-                onSelected: (bool value) {},
-              ),
-            ],
-          ),
-          divider10(),
-          TextFieldNormalWidget(
-            hintText: "Fecha",
-            icon: Icons.date_range,
-            onTap: () {
-              showSelectDate();
-            },
-          ),
-          divider20(),
-          ButtonNormalWidget(),
-        ],
+               
+             
+              ],
+            ),
+            divider10(),
+            TextFieldNormalWidget(
+              hintText: "Fecha",
+              icon: Icons.date_range,
+              onTap: () {
+                showSelectDate();
+              },
+              controller: _dateController,
+            ),
+            divider20(),
+            ButtonNormalWidget(
+              onPressed: (){
+                if(formKey.currentState!.validate()){
+                  
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
