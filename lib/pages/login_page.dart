@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tasks/pages/register_pages.dart';
 import 'package:tasks/ui/general/colors.dart';
 import 'package:tasks/ui/widgets/button_normal_widget.dart';
 import 'package:tasks/ui/widgets/general_widget.dart';
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding:const EdgeInsets.all(16.0),
           child: Column(
             children: [
               divider120(),
@@ -57,12 +58,14 @@ class _LoginPageState extends State<LoginPage> {
               ButtonCustonWidget(
                 text: "Iniciar Sesion",
                 icon: "check",
-                color: kBranPrimaryColor  ,
+                color: kBranPrimaryColor,
               ),
               divider20(),
-              Text("O ingresa con tus redes sociales",),
-               divider20(),
-               ButtonCustonWidget(
+              Text(
+                "O ingresa con tus redes sociales",
+              ),
+              divider20(),
+              ButtonCustonWidget(
                 text: "Iniciar sesión con Google",
                 icon: "google",
                 color: Color(0xfff84b2a),
@@ -71,7 +74,29 @@ class _LoginPageState extends State<LoginPage> {
               ButtonCustonWidget(
                 text: "Iniciar sesión con Facebook",
                 icon: "facebook",
-                color: Color(0xff507cc0)  ,
+                color: Color(0xff507cc0),
+              ),
+              divider20(),
+              Row(
+                mainAxisAlignment:MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Aún no estas registraado?   ",
+                  ),
+                  divider10Width(),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPages()));
+                    },
+                    child: Text(
+                      "Registrate",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: kBranPrimaryColor,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
