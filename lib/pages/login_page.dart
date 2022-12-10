@@ -30,10 +30,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               divider120(),
-              /*SvgPicture.asset(
+              SvgPicture.asset(
                 'asset/images/login.svg',
                 height: 180.0,
-              ),*/
+              ),
               divider30(),
               Text(
                 "Iniciar Sesion",
