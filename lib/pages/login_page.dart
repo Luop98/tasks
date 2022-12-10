@@ -6,6 +6,8 @@ import 'package:tasks/ui/widgets/general_widget.dart';
 import 'package:tasks/ui/widgets/textfield_normal_widget.dart';
 import 'package:tasks/ui/widgets/textfield_password_widget.dart';
 
+import '../ui/widgets/button_custom_widget.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -52,9 +54,25 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _passwordController,
               ),
               divider20(),
-              ButtonNormalWidget(
-                onPressed: () {},
-              )
+              ButtonCustonWidget(
+                text: "Iniciar Sesion",
+                icon: "check",
+                color: kBranPrimaryColor  ,
+              ),
+              divider20(),
+              Text("O ingresa con tus redes sociales",),
+               divider20(),
+               ButtonCustonWidget(
+                text: "Iniciar sesión con Google",
+                icon: "google",
+                color: Color(0xfff84b2a),
+              ),
+              divider20(),
+              ButtonCustonWidget(
+                text: "Iniciar sesión con Facebook",
+                icon: "facebook",
+                color: Color(0xff507cc0)  ,
+              ),
             ],
           ),
         ),
