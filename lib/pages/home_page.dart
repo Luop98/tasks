@@ -10,7 +10,6 @@ import 'package:tasks/ui/widgets/textfield_normal_widget.dart';
 import '../ui/widgets/task_form_widget.dart';
 
 class HomePage extends StatelessWidget {
-
   final TextEditingController _searchController = TextEditingController();
 
   CollectionReference tasksReference =
@@ -26,7 +25,6 @@ class HomePage extends StatelessWidget {
           padding: MediaQuery.of(context).viewInsets,
           child: TaskFormWidget(),
         );
-     
       },
     );
   }
@@ -106,7 +104,7 @@ class HomePage extends StatelessWidget {
                     ),
                     divider10(),
                     TextFieldNormalWidget(
-                      controller:_searchController,
+                      controller: _searchController,
                       icon: Icons.search,
                       hintText: "Buscar tarea..",
                     ),
@@ -139,10 +137,18 @@ class HomePage extends StatelessWidget {
                           tasks.add(TaskModel.fromJson(myMap));
                         });*/
 
-                        tasks = collection.docs
-                            .map((e) => TaskModel.fromJson(
-                                e.data() as Map<String, dynamic>))
-                            .toList();
+                        /*tasks = collection.docs
+                            .map(
+                              (e) => TaskModel.fromJson(
+                                  e.data() as Map<String, dynamic>),
+                            )
+                            .toList();*/
+
+                        tasks = collection.docs.map((e){
+                          TaskModel task =TaskModel.fromJson(e.data() as Map<String, dynamic>);
+                          task.id = e.id;
+                          return task;  
+                        }).toList();
 
                         return ListView.builder(
                           itemCount: tasks.length,

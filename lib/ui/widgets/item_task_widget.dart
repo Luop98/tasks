@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasks/models/task_model.dart';
+import 'package:tasks/services/my_service_firestore.dart';
 import 'package:tasks/ui/widgets/item_category_widget.dart';
 
 import '../general/colors.dart';
@@ -9,6 +10,77 @@ class ItemTaskWidget extends StatelessWidget {
   TaskModel taskModel;
 
   ItemTaskWidget({required this.taskModel});
+
+ final MyServiceFirestore _myServiceFirestore = MyServiceFirestore(collection: "tasks");
+
+  showFinishedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Finalizar Tarea",
+                style: TextStyle(
+                  color: kBranPrimaryColor.withOpacity(0.87),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              divider6(),
+              Text(
+                "¿Deseas finalizar la tarea seleccionada?",
+                style: TextStyle(
+                  color: kBranPrimaryColor.withOpacity(0.87),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13.0,
+                ),
+              ),
+              divider10(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "Cancelar",
+                      style: TextStyle(
+                        color: kBranPrimaryColor.withOpacity(0.5),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ),
+                  divider10Width(),
+                  ElevatedButton(
+                    onPressed: () {
+                      _myServiceFirestore.finishedTask(taskModel.id!);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: kBranPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                    ),
+                    child: Text(
+                      "Finalizar",
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +109,9 @@ class ItemTaskWidget extends StatelessWidget {
               divider3(),
               Text(
                 taskModel.title,
+
                 style: TextStyle(
+                  decoration: taskModel.status ? TextDecoration.none : TextDecoration.lineThrough,
                   fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                   color: kBranPrimaryColor.withOpacity(0.85),
@@ -68,12 +142,15 @@ class ItemTaskWidget extends StatelessWidget {
             child: PopupMenuButton(
               elevation: 2,
               color: Colors.white,
-              icon: Icon(Icons.more_vert, color: kBranPrimaryColor.withOpacity(0.86)),
+              icon: Icon(Icons.more_vert,
+                  color: kBranPrimaryColor.withOpacity(0.86)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14.0),
               ),
-              onSelected: (value){
-                print(value); 
+              onSelected: (value) {
+                if (value == 2) {
+                  showFinishedDialog(context);
+                }
               },
               itemBuilder: (BuildContext context) {
                 return [
@@ -88,7 +165,7 @@ class ItemTaskWidget extends StatelessWidget {
                     ),
                   ),
                   PopupMenuItem(
-                    value:  2,
+                    value: 2,
                     child: Text(
                       "Finalizar",
                       style: TextStyle(
