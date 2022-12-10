@@ -5,14 +5,15 @@ import '../general/colors.dart';
 
 class ButtonCustonWidget extends StatelessWidget {
   String text;
-
   Color color;
   String icon;
+  Function onPressed;
 
   ButtonCustonWidget({
     required this.text,
     required this.color,
     required this.icon,
+    required this.onPressed,
   });
 
   @override
@@ -21,7 +22,9 @@ class ButtonCustonWidget extends StatelessWidget {
       height: 52.0,
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () {
+          onPressed();
+        },
         style: ElevatedButton.styleFrom(
           primary: color,
           shape: RoundedRectangleBorder(

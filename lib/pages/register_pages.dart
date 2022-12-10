@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../ui/general/colors.dart';
@@ -14,11 +15,17 @@ class RegisterPages extends StatefulWidget {
 }
 
 class _RegisterPagesState extends State<RegisterPages> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
 
-  final TextEditingController _emailController =TextEditingController();
-  final TextEditingController _passwordController =TextEditingController();
-  final TextEditingController _fullNameController =TextEditingController();
-
+  _registerUser()async {
+   UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: "mandarina3@gmail.com",
+      password: "123456",
+    );
+    print(userCredential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,7 @@ class _RegisterPagesState extends State<RegisterPages> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding:const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               divider120(),
@@ -66,6 +73,9 @@ class _RegisterPagesState extends State<RegisterPages> {
                 text: "Registrate Ahora",
                 icon: "check",
                 color: kBranPrimaryColor,
+                onPressed: (){
+                  _registerUser();
+                },
               ),
             ],
           ),
