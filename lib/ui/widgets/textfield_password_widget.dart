@@ -1,36 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:tasks/ui/general/colors.dart';
 
-class TextFieldNormalWidget extends StatelessWidget {
-  String hintText;
-  IconData icon;
-  Function? onTap;
+import '../general/colors.dart';
+
+class TextFieldPasswordWidget extends StatefulWidget {
   TextEditingController controller;
+  TextFieldPasswordWidget({required this.controller});
 
-  TextFieldNormalWidget({
-    required this.hintText,
-    required this.icon,
-    this.onTap,
-    required this.controller,
-  });
+  @override
+  State<TextFieldPasswordWidget> createState() =>
+      _TextFieldPasswordWidgetState();
+}
 
+class _TextFieldPasswordWidgetState extends State<TextFieldPasswordWidget> {
+  
+  bool isInvisible = true;
+  
+  
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-
-      controller: controller,
-      onTap: onTap != null ? (){onTap!();}:null,
-      readOnly: onTap != null ? true : false,
-      
+      controller: widget.controller,
+      obscureText: isInvisible,
       decoration: InputDecoration(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12.0, vertical: 15.0),
         prefixIcon: Icon(
-          icon,
+          Icons.lock,
           size: 20.0,
           color: kBranPrimaryColor.withOpacity(0.6),
         ),
-        
+        suffixIcon: IconButton(
+          icon: Icon(
+           isInvisible ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+            color: kBranPrimaryColor.withOpacity(0.60),
+          ),
+          onPressed: () {
+            isInvisible = !isInvisible;
+            setState(() {});
+          },
+        ),
         hintText: "Contraseña",
         hintStyle: TextStyle(
           fontSize: 14.0,
@@ -62,6 +70,5 @@ class TextFieldNormalWidget extends StatelessWidget {
         return null;
       },
     );
-
   }
 }
