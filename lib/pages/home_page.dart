@@ -11,6 +11,9 @@ import '../ui/widgets/task_form_widget.dart';
 import '../utils/task_search_delegate.dart';
 
 class HomePage extends StatelessWidget {
+  
+  List<TaskModel> tasksGeneral = []; 
+  
   final TextEditingController _searchController = TextEditingController();
 
   CollectionReference tasksReference =
@@ -109,7 +112,7 @@ class HomePage extends StatelessWidget {
                       icon: Icons.search,
                       hintText: "Buscar tarea...",
                       onTap: () async{
-                     await   showSearch(context: context, delegate: TaskSearchDelegate());
+                     await   showSearch(context: context, delegate: TaskSearchDelegate(tasks: tasksGeneral ));
                       },
                     ),
                   ],
@@ -153,6 +156,9 @@ class HomePage extends StatelessWidget {
                           task.id = e.id;
                           return task;  
                         }).toList();
+                        tasksGeneral .clear();
+
+                        tasksGeneral = tasks;
 
                         return ListView.builder(
                           itemCount: tasks.length,
