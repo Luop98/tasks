@@ -1,11 +1,13 @@
-import 'dart:html';
+
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tasks/models/user_model.dart';
 import 'package:tasks/pages/home_page.dart';
 import 'package:tasks/pages/register_pages.dart';
+import 'package:tasks/services/my_service_firestore.dart';
 import 'package:tasks/ui/general/colors.dart';
 import 'package:tasks/ui/widgets/button_normal_widget.dart';
 import 'package:tasks/ui/widgets/general_widget.dart';
@@ -25,7 +27,9 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final GoogleSignIn _googleSignIn =   GoogleSignIn(scopes: ["email"]);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ["email"]);
+  MyServiceFirestore userService = MyServiceFirestore(collection: "users");
+
   _login() async {
     try {
       if (formKey.currentState!.validate()) {
@@ -52,21 +56,39 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  _loginWithGoogle() async  {
-   
-   GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+  _loginWithGoogle() async {
+    GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
 
- if (googleSignInAccount == null){
-  return;
- }
-    GoogleSignInAuthentication _googleSignInAuth = await googleSignInAccount.authentication;
-   
-   OAuthCredential credential = GoogleAuthProvider.credential(
-    idToken: _googleSignInAuth.idToken,
-    accessToken: _googleSignInAuth.accessToken,
-   );
+    if (googleSignInAccount == null) {
+      return;
+    }
+    GoogleSignInAuthentication _googleSignInAuth =
+        await googleSignInAccount.authentication;
 
-   UserCredential userCredential=await FirebaseAuth.instance.signInWithCredential(credential);
+    OAuthCredential credential = GoogleAuthProvider.credential(
+      idToken: _googleSignInAuth.idToken,
+      accessToken: _googleSignInAuth.accessToken,
+    );
+
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    if (userCredential.user != null) {
+      UserModel userModel = UserModel(
+        fullName: userCredential.user!.displayName!,
+        email: userCredential.user!.email!,
+      );
+      userService.existkUser(userCredential.user!.email!).then((value){
+        if(!value){
+          userService.addUser(userModel).then((value) {
+         if(value.isNotEmpty){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
+            }
+      });
+        }else {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
+        }
+      });
+    }
   }
 
   @override
@@ -120,12 +142,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 divider20(),
                 ButtonCustonWidget(
-                    text: "Iniciar sesión con Google",
-                    icon: "google",
-                    color: Color(0xfff84b2a),
-                    onPressed: () {
-                      _loginWithGoogle();
-                    },),
+                  text: "Iniciar sesión con Google",
+                  icon: "google",
+                  color: Color(0xfff84b2a),
+                  onPressed: () {
+                    _loginWithGoogle();
+                  },
+                ),
                 divider20(),
                 ButtonCustonWidget(
                   text: "Iniciar sesión con Facebook",
