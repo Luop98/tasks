@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tasks/models/user_model.dart';
@@ -92,7 +93,38 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _loginWithFacebook() async {
+    LoginResult _loginResult = await FacebookAuth.instance.login();
+   if(_loginResult.status== LoginStatus.success){
+   Map<String, dynamic> userData = await  FacebookAuth.instance.getUserData();
+   
+    AccessToken accessToken = _loginResult.accessToken!;
+
+    OAuthCredential credential = FacebookAuthProvider.credential(accessToken.token); 
+
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+  if (userCredential.user != null) {
+
+
+      UserModel userModel = UserModel(
+        fullName: userCredential.user!.displayName!,
+        email: userCredential.user!.email!,
+      );
       
+      userService.existkUser(userCredential.user!.email!).then((value){
+        if(!value){
+          userService.addUser(userModel).then((value) {
+         if(value.isNotEmpty){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
+            }
+      });
+        }else {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
+        }
+      });
+    }
+
+   }
   }
 
 
