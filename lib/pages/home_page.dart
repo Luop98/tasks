@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tasks/models/task_model.dart';
+import 'package:tasks/pages/login_page.dart';
 import 'package:tasks/ui/general/colors.dart';
 import 'package:tasks/ui/widgets/button_normal_widget.dart';
 import 'package:tasks/ui/widgets/general_widget.dart';
@@ -11,13 +14,14 @@ import '../ui/widgets/task_form_widget.dart';
 import '../utils/task_search_delegate.dart';
 
 class HomePage extends StatelessWidget {
-  
-  List<TaskModel> tasksGeneral = []; 
-  
+  List<TaskModel> tasksGeneral = [];
+
   final TextEditingController _searchController = TextEditingController();
 
   CollectionReference tasksReference =
       FirebaseFirestore.instance.collection('tasks');
+
+      final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   showTaskFrom(BuildContext context) {
     showModalBottomSheet(
@@ -90,29 +94,48 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Bienvenido Ramon",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w500,
-                        color: kBranPrimaryColor,
-                      ),
-                    ),
-                    Text(
-                      "Mis Tareas",
-                      style: TextStyle(
-                        fontSize: 36.0,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff2c3550),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              "Bienvenido Ramon",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                                color: kBranPrimaryColor,
+                              ),
+                            ),
+                            Text(
+                              "Mis Tareas",
+                              style: TextStyle(
+                                fontSize: 36.0,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff2c3550),
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            FacebookAuth.instance.logOut();
+                            _googleSignIn.signOut();
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> LoginPage()), (route) => false);
+                          },
+                          icon: Icon(Icons.exit_to_app, color: kBranPrimaryColor,),
+                        ),
+                      ],
                     ),
                     divider10(),
                     TextFieldNormalWidget(
                       controller: _searchController,
                       icon: Icons.search,
                       hintText: "Buscar tarea...",
-                      onTap: () async{
-                     await   showSearch(context: context, delegate: TaskSearchDelegate(tasks: tasksGeneral ));
+                      onTap: () async {
+                        await showSearch(
+                            context: context,
+                            delegate: TaskSearchDelegate(tasks: tasksGeneral));
                       },
                     ),
                   ],
@@ -151,12 +174,13 @@ class HomePage extends StatelessWidget {
                             )
                             .toList();*/
 
-                        tasks = collection.docs.map((e){
-                          TaskModel task =TaskModel.fromJson(e.data() as Map<String, dynamic>);
+                        tasks = collection.docs.map((e) {
+                          TaskModel task = TaskModel.fromJson(
+                              e.data() as Map<String, dynamic>);
                           task.id = e.id;
-                          return task;  
+                          return task;
                         }).toList();
-                        tasksGeneral .clear();
+                        tasksGeneral.clear();
 
                         tasksGeneral = tasks;
 
