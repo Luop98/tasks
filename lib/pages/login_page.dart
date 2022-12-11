@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tasks/pages/home_page.dart';
 import 'package:tasks/pages/register_pages.dart';
 import 'package:tasks/ui/general/colors.dart';
@@ -19,32 +20,39 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final formKey =GlobalKey<FormState>();
- final TextEditingController _emailController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  _login()  async{
-  try{
-   if(formKey.currentState!.validate()){
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
-    if(userCredential.user != null){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
-    }
-   }
-  
-  } on FirebaseAuthException catch(error){
-    if(error.code=="invalid-email"){
-      showSnackBarError(context, "El correo electronico es invalido");
-
-    }else if (error.code == "user-not-found"){
-      showSnackBarError(context, "El usuario no esta registrado");
-    }else if(error.code == "wrong-password "){
-      showSnackBarError(context, "La contraseña es incorrecta");
+  _login() async {
+    try {
+      if (formKey.currentState!.validate()) {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        if (userCredential.user != null) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+              (route) => false);
+        }
+      }
+    } on FirebaseAuthException catch (error) {
+      if (error.code == "invalid-email") {
+        showSnackBarError(context, "El correo electronico es invalido");
+      } else if (error.code == "user-not-found") {
+        showSnackBarError(context, "El usuario no esta registrado");
+      } else if (error.code == "wrong-password ") {
+        showSnackBarError(context, "La contraseña es incorrecta");
+      }
     }
   }
+
+  _lognWithGoogle() {
+   GoogleSignIn _googleSignIn =   GoogleSignIn(scopes: ["email"]);
+    _googleSignIn.signIn();
   }
 
   @override
@@ -104,10 +112,13 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {}),
                 divider20(),
                 ButtonCustonWidget(
-                    text: "Iniciar sesión con Facebook",
-                    icon: "facebook",
-                    color: Color(0xff507cc0),
-                    onPressed: () {}),
+                  text: "Iniciar sesión con Facebook",
+                  icon: "facebook",
+                  color: Color(0xff507cc0),
+                  onPressed: () {
+                    _lognWithGoogle();
+                  },
+                ),
                 divider20(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
